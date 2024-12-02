@@ -19,21 +19,37 @@
 (defn distance [x y]
   (abs (- x y)))
 
-; (defn find-min [coll]
-;   (some ))
+(defn find-min [coll]
+  (let [min-val (apply min coll)]
+    {:min min-val
+     :idx (.indexOf coll min-val)}))
+
+(defn remove-nth [n coll]
+  (keep-indexed #(when (not= %1 n) %2) coll))
 
 (defn total-distance [fst snd acc]
   (if (or (empty? fst) (empty? snd))
     acc
 
-    (let [fst-min (apply min fst)
-        snd-min (apply min snd)
-        new-fst (remove #(= fst-min %) fst)
-        new-snd (remove #(= snd-min %) snd)
-        dst (distance fst-min snd-min)]
-      (println dst)
+    (let [fst-min (find-min fst)
+        snd-min (find-min snd)
+        new-fst (remove-nth (:idx fst-min) fst)
+        new-snd (remove-nth (:idx snd-min) snd)
+        dst (distance (:min fst-min) (:min snd-min))]
       (total-distance new-fst
                       new-snd 
                       (+ acc dst)))))
 
 (total-distance (:first processed-input) (:second processed-input) 0)
+
+(defn similarity-score [v snd]
+  (let [cnt (count (filter #(= v %) snd))]
+    (* v cnt)))
+
+(similarity-score 3 (:second processed-input))
+
+(defn total-similarity-score [fst snd]
+  (reduce + (map #(similarity-score % snd) fst)))
+
+(total-similarity-score (:first processed-input) (:second processed-input))
+
