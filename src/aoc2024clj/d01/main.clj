@@ -1,11 +1,13 @@
+(ns aoc2024clj.d01.main)
+
 (require '[clojure.string :as str])
 
 (def input (slurp "./src/aoc2024clj/d01/input.txt"))
 
 (defn read-pair [line]
-    (let [parts (str/split line #"   ")]
-      {:first (first parts)
-       :second (last parts)}))
+  (let [parts (str/split line #"   ")]
+    {:first (first parts)
+     :second (last parts)}))
 
 (defn read-input [input]
   (let [pairs (map read-pair (str/split-lines input))
@@ -32,12 +34,12 @@
     acc
 
     (let [fst-min (find-min fst)
-        snd-min (find-min snd)
-        new-fst (remove-nth (:idx fst-min) fst)
-        new-snd (remove-nth (:idx snd-min) snd)
-        dst (distance (:min fst-min) (:min snd-min))]
+          snd-min (find-min snd)
+          new-fst (remove-nth (:idx fst-min) fst)
+          new-snd (remove-nth (:idx snd-min) snd)
+          dst (distance (:min fst-min) (:min snd-min))]
       (total-distance new-fst
-                      new-snd 
+                      new-snd
                       (+ acc dst)))))
 
 (total-distance (:first processed-input) (:second processed-input) 0)
