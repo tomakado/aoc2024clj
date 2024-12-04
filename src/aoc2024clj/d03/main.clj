@@ -20,15 +20,14 @@
 (defn mul-args [op]
   (map #(Integer/parseInt %) (re-seq #"[0-9]{1,3}" op)))
 
+(defn calc-mul-op [op]
+  (let [args (mul-args op)
+        a (first args)
+        b (second args)]
+    (* a b)))
+
 (defn calc-1 [ops]
-  (let [mul-ops (filter mul? ops)]
-    (reduce (fn [acc op]
-              (let [args (mul-args op)
-                    a (first args)
-                    b (second args)]
-                (+ acc (* a b))))
-            0
-            mul-ops)))
+  (reduce #(+ %1 (calc-mul-op %2)) 0 ops))
 
 (defn calc-2 [ops acc mul-enabled]
   (if (empty? ops)
@@ -36,13 +35,10 @@
     (let [op (first ops)
           enabled (mul-enabled? mul-enabled op)
           op-res (if (and (mul? op) enabled)
-                   (let [args (mul-args op)
-                         a (first args)
-                         b (second args)]
-                     (* a b))
+                   (calc-mul-op op)
                    0)]
 
       (calc-2 (rest ops) (+ acc op-res) enabled))))
 
-(calc-1 ops)
+(calc-1 (filter mul? ops))
 (calc-2 ops 0 true)
